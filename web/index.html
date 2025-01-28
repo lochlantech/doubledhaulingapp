@@ -4,11 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DoubleD Hauling App</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./styles.css">
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
+        const firebaseConfig = {
+          apiKey: "AIzaSyBcxpkGJq1w7_FOz4KPJF4QLecSzP83QaM",
+          authDomain: "doubledhaulingapp.firebaseapp.com",
+          projectId: "doubledhaulingapp",
+          storageBucket: "doubledhaulingapp.firebasestorage.app",
+          messagingSenderId: "54664234955",
+          appId: "1:54664234955:web:fda99d516275fbcc37984e",
+          measurementId: "G-MQEL2GV67W"
+        };
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+      </script>
 </head>
 <body>
-    <h1>Welcome to DoubleD Hauling App</h1>
-    <div id="app"></div>
+    <div class="container mt-5">
+        <div id="home">
+            <h1>Welcome to DoubleD Hauling App</h1>
+            <div id="app"></div>
+        </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="./main.js"></script>
 </body>
 </html>

@@ -1,3 +1,4 @@
-// Example: Dynamic content injection
-const content = document.getElementById("content");
-content.innerHTML = "<p>This is a basic app setup using vanilla JavaScript.</p>";
+console.log("Firebase initialized", app);
+
+const appDiv = document.getElementById("app");
+appDiv.innerHTML = "<p>Firebase is successfully integrated into the app!</p>";

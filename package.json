@@ -4,9 +4,10 @@
   "main": "index.js",
   "dependencies": {
     "@capacitor/android": "^4.2.0",
-    "@capacitor/core": "^4.2.0",
     "@capacitor/cli": "^4.2.0",
-    "@capacitor/ios": "^4.2.0"
+    "@capacitor/core": "^4.2.0",
+    "@capacitor/ios": "^4.2.0",
+    "firebase": "^11.2.0"
   },
   "devDependencies": {
     "vite": "^4.0.0"
