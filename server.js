@@ -12,7 +12,11 @@ const app = express();
 const PORT = 3000;
 
 // ✅ Middleware
-const allowedOrigins = ["http://localhost:49391", "http://127.0.0.1:8080"];
+const allowedOrigins = [
+    "http://localhost:49391",
+    "http://127.0.0.1:8080",
+    "http://localhost:8080"
+];
 app.use(
     cors({
         origin: function (origin, callback) {
@@ -27,17 +31,16 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(
-    session({
-        secret: "a_secure_random_string_for_dev",
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            httpOnly: true,
-            secure: false,
-        },
-    })
-);
+app.use(session({
+    secret: "your_secret_key", // Replace with a strong, random key
+    resave: false, // Avoid saving unchanged sessions
+    saveUninitialized: false, // Avoid saving empty sessions
+    cookie: {
+        httpOnly: true, // Prevent access to cookies via JavaScript
+        secure: false, // Set to `true` if using HTTPS
+        sameSite: "lax", // Helps with cross-origin cookies
+    },
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -46,20 +49,23 @@ passport.use(
     new LocalStrategy(async (username, password, done) => {
         console.log(`Authenticating user: ${username}`);
         try {
+            // Retrieve the user document from CouchDB
             const userDoc = await usersDb.get(`user:${username}`).catch(() => null);
             if (!userDoc) {
                 console.log("User not found");
                 return done(null, false, { message: "User not found" });
             }
 
+            // Verify the password
             const isMatch = await bcrypt.compare(password, userDoc.password);
             if (!isMatch) {
                 console.log("Password mismatch");
                 return done(null, false, { message: "Incorrect password" });
             }
 
-            console.log("Authentication successful");
-            return done(null, userDoc);
+            // Log the user's role
+            console.log(`Authentication successful. User role: ${userDoc.role}`);
+            return done(null, userDoc); // Include role in the userDoc
         } catch (error) {
             console.error("Error during authentication:", error);
             return done(error);
@@ -71,7 +77,8 @@ passport.serializeUser((user, done) => done(null, user._id));
 passport.deserializeUser(async (id, done) => {
     try {
         const user = await usersDb.get(id);
-        done(null, user);
+
+        done(null, { username: user.username, role: user.role });
     } catch (error) {
         done(error);
     }
@@ -122,21 +129,19 @@ app.post("/register", async (req, res) => {
 });
 
 // ✅ Login Route
-app.post("/login", (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
-        if (err) {
-            return res.status(500).send({ message: "Internal server error" });
-        }
-        if (!user) {
-            return res.status(401).send({ message: info.message || "Unauthorized" });
-        }
-        req.logIn(user, (err) => {
-            if (err) {
-                return res.status(500).send({ message: "Failed to log in" });
-            }
-            return res.send({ message: "Login successful", user });
-        });
-    })(req, res, next);
+app.post("/login", passport.authenticate("local"), (req, res) => {
+    if (!req.user || !req.user.role) {
+        return res.status(500).send({ message: "User role is undefined" });
+    }
+
+    console.log("Logged in user:", req.user);
+    res.send({
+        message: "Login successful",
+        user: {
+            username: req.user.username,
+            role: req.user.role,
+        },
+    });
 });
 
 // ✅ Logout Route
@@ -148,27 +153,32 @@ app.post("/logout", (req, res) => {
 });
 
 // ✅ Fetch All Users (Admin Only)
-app.get("/users", async (req, res) => {
-    if (!req.isAuthenticated()) {
+app.get("/users", (req, res) => {
+    console.log("Session ID:", req.sessionID);
+    console.log("Session:", req.session);
+    console.log("Authenticated:", req.isAuthenticated());
+    console.log("User:", req.user);
+    console.log("HTTP Header", req.body);
+    if (!req.isAuthenticated() || !req.user) {
         return res.status(403).send({ message: "Not authorized" });
     }
-
     if (req.user.role !== "admin") {
         return res.status(403).send({ message: "Only admin can access this resource" });
     }
 
-    try {
-        const usersList = await usersDb.list({ include_docs: true });
-        const users = usersList.rows.map((row) => ({
-            username: row.doc.username,
-            role: row.doc.role,
-        }));
-
-        res.send(users);
-    } catch (error) {
-        console.error("Error fetching users:", error);
-        res.status(500).send({ message: "Error fetching users" });
-    }
+    // Fetch users from CouchDB if the role is admin
+    usersDb.list({ include_docs: true })
+        .then((usersList) => {
+            const users = usersList.rows.map((row) => ({
+                username: row.doc.username,
+                role: row.doc.role,
+            }));
+            res.send(users);
+        })
+        .catch((error) => {
+            console.error("Error fetching users:", error);
+            res.status(500).send({ message: "Error fetching users" });
+        });
 });
 
 // ✅ Start Server

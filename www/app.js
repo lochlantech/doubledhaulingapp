@@ -10,19 +10,21 @@ async function login(username, password) {
             body: JSON.stringify({ username, password }),
         });
 
+        if (!response.ok) {
+            const error = await response.text(); // Capture error details
+            console.error("Login failed with error:", error);
+            alert("Login failed. Please check your credentials.");
+            return;
+        }
+
         const data = await response.json();
+        alert(data.message);
 
-        if (response.ok) {
-            alert(data.message);
-            sessionStorage.setItem("userRole", data.user.role);
-
-            if (data.user.role === "admin") {
-                window.location.href = "adminPage.html";
-            } else {
-                alert("You are logged in, but you do not have admin privileges.");
-            }
+        sessionStorage.setItem("userRole", data.user.role);
+        if (data.user.role === "admin") {
+            window.location.href = "adminPage.html";
         } else {
-            alert(data.message);
+            alert("You are logged in, but you do not have admin privileges.");
         }
     } catch (error) {
         console.error("Login error:", error);
@@ -35,6 +37,7 @@ async function registerUser(username, password, role) {
     try {
         const response = await fetch(`${API_URL}/register`, {
             method: "POST",
+            credentials: "include", // Ensure cookies are handled properly
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password, role }),
         });
@@ -57,6 +60,7 @@ async function registerUser(username, password, role) {
 async function fetchUsers() {
     try {
         const response = await fetch(`${API_URL}/users`, {
+            method: "GET",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
         });
@@ -67,14 +71,14 @@ async function fetchUsers() {
         }
 
         const data = await response.json();
-        const userList = document.getElementById("userList");
 
+        const userList = document.getElementById("userList");
         if (userList) {
             userList.innerHTML = "";
 
             data.forEach((user) => {
                 const li = document.createElement("li");
-                li.textContent = `${user.username} - Role: ${user.role}`;
+                li.textContent = `${user.username} - Role: ${user.role || "undefined"}`; // Handle undefined roles
 
                 const deleteButton = document.createElement("button");
                 deleteButton.textContent = "Delete";
