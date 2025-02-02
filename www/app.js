@@ -94,6 +94,11 @@ async function fetchUsers() {
     } catch (error) {
         console.error("Error fetching users:", error);
     }
+    console.log("Fetch Request Headers:", {
+        method: "GET",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+    });
 }
 
 // Function to delete a user (admin only)

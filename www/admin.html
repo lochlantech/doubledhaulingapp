@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - DoubleD Hauling App</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Admin Dashboard</h1>
+        <button id="logoutButton" class="btn btn-secondary float-end">Log Out</button>
+        <form id="createUserForm" class="mt-4">
+            <h3>Create New Account</h3>
+            <div class="mb-3">
+                <label for="newUserEmail" class="form-label">Email</label>
+                <input type="email" id="newUserEmail" class="form-control" placeholder="Enter email" required>
+            </div>
+            <div class="mb-3">
+                <label for="newUserPassword" class="form-label">Password</label>
+                <input type="password" id="newUserPassword" class="form-control" placeholder="Enter password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create User</button>
+        </form>
+        <form id="deleteUserForm" class="mt-4">
+            <h3>Delete User</h3>
+            <div class="mb-3">
+                <label for="deleteUserEmail" class="form-label">Email</label>
+                <input type="email" id="deleteUserEmail" class="form-control" placeholder="Enter email" required>
+            </div>
+            <button type="submit" class="btn btn-danger">Delete User</button>
+        </form>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="./admin.js"></script>
+</body>
+</html>
