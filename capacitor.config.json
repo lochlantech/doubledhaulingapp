@@ -1,5 +1,5 @@
 {
-  "appId": "com.doubledhauling.app",
-  "appName": "DoubleD Hauling App",
+  "appId": "com.example.capacitor",
+  "appName": "doubledhaulingapp",
   "webDir": "www"
 }

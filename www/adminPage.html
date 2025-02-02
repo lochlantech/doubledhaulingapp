@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <h1>Welcome, Admin</h1>
+    <p>You are now logged in as an admin.</p>
+    <h2>Register New User</h2>
+    <form id="registerForm">
+        <input type="text" id="regUsername" placeholder="Enter Username" required>
+        <input type="password" id="regPassword" placeholder="Enter Password" required>
+        <select id="regRole">
+            <option value="staff">Staff</option>
+            <option value="admin">Admin</option>
+        </select>
+        <button type="submit">Register</button>
+    </form>
+    <h2>Registered Users</h2>
+    <ul id="userList"></ul>
+    <button id="logoutButton" style="margin-top: 20px;">Logout</button>
+</body>
+</html>

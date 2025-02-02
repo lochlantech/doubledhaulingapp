@@ -1,1 +1,0 @@
-document.getElementById("content").innerHTML="<p>This is a basic app setup using vanilla JavaScript.</p>";

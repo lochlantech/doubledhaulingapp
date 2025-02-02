@@ -2,19 +2,31 @@
   "name": "doubledhaulingapp",
   "version": "1.0.0",
   "main": "index.js",
+  "scripts": {
+    "dev:frontend": "http-server ./www -p 8080", 
+    "dev:backend": "nodemon server.js", 
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"" 
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
-    "@capacitor/android": "^4.2.0",
-    "@capacitor/cli": "^4.2.0",
-    "@capacitor/core": "^4.2.0",
-    "@capacitor/ios": "^4.2.0",
-    "firebase": "^11.2.0"
+    "@capacitor/cli": "^6.2.0",
+    "@capacitor/core": "^7.0.1",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "http-server": "^14.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "nano": "^10.1.4",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
-    "vite": "^4.0.0"
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "nodemon": "^3.1.9",
+    "concurrently": "^7.5.0"
   }
 }
