@@ -6,14 +6,14 @@ async function signUp(username, email, password, role) {
         const response = await fetch(`${API_URL}/auth/signup`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password, role }), // Include role
+            body: JSON.stringify({ username, email, password, role }),
         });
 
         const data = await response.json();
 
         if (response.ok) {
             alert("Signup successful! Please log in.");
-            window.location.href = "index.html"; // Redirect to login page
+            window.location.href = "index.html";
         } else {
             alert("Signup failed: " + (data.error || "Unknown error"));
         }
@@ -36,12 +36,9 @@ async function login(email, password) {
 
         if (response.ok) {
             console.log("Login successful:", data);
-
-            // Store the JWT and role in localStorage
             localStorage.setItem("token", data.token);
             localStorage.setItem("role", data.role);
 
-            // Redirect based on role
             if (data.role === "admin") {
                 window.location.href = "admin.html";
             } else if (data.role === "staff") {
@@ -69,6 +66,23 @@ function logout() {
 function checkAuth() {
     const token = localStorage.getItem("token");
     if (!token) {
-        window.location.href = "index.html"; // Redirect to login
+        window.location.href = "index.html";
+    }
+}
+
+// Check if the current user is an admin
+function checkAdmin() {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    if (!token) {
+        alert("Access denied. Please log in.");
+        window.location.href = "index.html";
+        return;
+    }
+
+    if (role !== "admin") {
+        alert("Access denied. Admins only.");
+        window.location.href = "staff.html";
     }
 }
