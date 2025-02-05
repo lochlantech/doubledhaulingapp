@@ -1,40 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - DoubleD Hauling App</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css">
+    <title>Admin Page</title>
+    <script src="js/auth.js" defer></script>
 </head>
-<body>
-    <div class="container mt-5">
-        <h1>Admin Dashboard</h1>
-        <button id="logoutButton" class="btn btn-secondary float-end">Log Out</button>
-        <form id="createUserForm" class="mt-4">
-            <h3>Create New Account</h3>
-            <div class="mb-3">
-                <label for="newUserEmail" class="form-label">Email</label>
-                <input type="email" id="newUserEmail" class="form-control" placeholder="Enter email" required>
-            </div>
-            <div class="mb-3">
-                <label for="newUserPassword" class="form-label">Password</label>
-                <input type="password" id="newUserPassword" class="form-control" placeholder="Enter password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Create User</button>
-        </form>
-        <form id="deleteUserForm" class="mt-4">
-            <h3>Delete User</h3>
-            <div class="mb-3">
-                <label for="deleteUserEmail" class="form-label">Email</label>
-                <input type="email" id="deleteUserEmail" class="form-control" placeholder="Enter email" required>
-            </div>
-            <button type="submit" class="btn btn-danger">Delete User</button>
-        </form>
-    </div>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="./admin.js"></script>
+<body onload="initializeAdminPage()">
+    <h2>Admin Panel</h2>
+
+    <!-- Logout Button -->
+    <button onclick="logout()">Logout</button>
+
+    <!-- Users Table -->
+    <h3>All Users</h3>
+    <table id="usersTable">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+       
+        // Initialize Admin Page (Check Access + Fetch Users)
+        function initializeAdminPage() {
+            checkAdmin();
+            fetchUsers();
+        }
+
+        // Logout Function
+        function logout() {
+            localStorage.removeItem("token");
+            localStorage.removeItem("role");
+            alert("Logged out successfully!");
+            window.location.href = "index.html"; // Redirect to login page
+        }
+
+        // Check Admin Role
+        function checkAdmin() {
+            checkAuth();
+            const role = localStorage.getItem("role");
+            if (role !== "admin") {
+                alert("Access denied!");
+                window.location.href = "staff.html"; // Redirect to staff page
+            }
+        }
+
+        // Fetch All Users (Admin Only)
+        async function fetchUsers() {
+            const token = localStorage.getItem("token");
+
+            try {
+                const response = await fetch(`${API_URL}/auth/users`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                const users = await response.json();
+                displayUsers(users);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+                alert("Failed to fetch users.");
+            }
+        }
+
+        // Display Users in Table
+        function displayUsers(users) {
+            const tableBody = document.querySelector("#usersTable tbody");
+            tableBody.innerHTML = ""; // Clear previous data
+
+            users.forEach(user => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td>${user.role}</td>
+                    <td>
+                        <button onclick="deleteUser('${user._id}')">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Delete User (Admin Only)
+        async function deleteUser(userId) {
+            const token = localStorage.getItem("token");
+
+            if (!confirm("Are you sure you want to delete this user?")) return;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/users/${userId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    fetchUsers(); // Refresh user list after deletion
+                } else {
+                    alert("Error deleting user: " + result.error);
+                }
+            } catch (error) {
+                console.error("Error deleting user:", error);
+                alert("Failed to delete user.");
+            }
+        }
+    </script>
 </body>
 </html>
