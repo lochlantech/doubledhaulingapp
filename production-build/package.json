@@ -2,11 +2,9 @@
   "name": "doubledhaulingapp",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "dev": "node server.js", 
-    "start": "node server.js", 
-    "build": "esbuild server.js --bundle --minify --sourcemap --platform=node --outdir=dist"
-  },
+ "scripts": {
+   "build": "esbuild server.js --bundle --minify --sourcemap --platform=node --outdir=dist"
+ },
   "keywords": [],
   "author": "",
   "license": "ISC",
