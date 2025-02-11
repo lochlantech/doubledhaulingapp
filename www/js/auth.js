@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5150"; // Correct port
+const API_URL = "https://www.ddheavyhauling.xyz";  // Correct port
 
 // Signup function
 async function signUp(username, email, password, role) {
