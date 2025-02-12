@@ -1,4 +1,4 @@
-export function generatePDF(reportData, logoImageElement) {
+window.generatePDF = function(reportData, logoImageElement) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 

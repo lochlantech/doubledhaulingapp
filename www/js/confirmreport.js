@@ -1,5 +1,3 @@
-import { generatePDF } from './pdfGenerator.js';
-
 document.addEventListener("DOMContentLoaded", () => {
     const reportData = JSON.parse(sessionStorage.getItem("reportData"));
 
