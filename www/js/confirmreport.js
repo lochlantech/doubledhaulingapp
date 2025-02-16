@@ -15,14 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <p><strong>Driver's Signature:</strong> ${reportData.driverSignature}</p>
     `;
 
-    // Ensure the logo image exists
-    const logoImageElement = document.getElementById("logoImage");
-    if (!logoImageElement) {
-        console.error("❌ Logo image not found in the document.");
-        alert("Error: Logo image is missing.");
-        return;
-    }
-
     // Attach event listener to submit button
     document.getElementById("submitReport").addEventListener("click", async () => {
         console.log("📄 Submit Report clicked");
@@ -42,6 +34,16 @@ document.addEventListener("DOMContentLoaded", () => {
         // ✅ Ensure PDF is correctly formatted as a File before sending
         const pdfFile = new File([pdfBlob], "inspection_report.pdf", { type: "application/pdf" });
 
+        // Retrieve token and check if it exists
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("❌ No authentication token found. User must log in.");
+            alert("❌ Authentication error: Please log in again.");
+            return;
+        }
+
+        console.log("🔑 Token being sent:", token);
+
         // Upload PDF to the backend
         const formData = new FormData();
         formData.append("pdf", pdfFile);
@@ -51,26 +53,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             console.log("📤 Uploading PDF...");
-            const response = await fetch("https://ddheavyhauling.xyz/pdfs", {
+            const response = await fetch("https://ddheavyhauling.xyz/pdfs/upload/", {
                 method: "POST",
                 body: formData,
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
-            const result = await response.json();
+            // Try to parse response as JSON, fallback to text if it's an error page
+            let result;
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                result = await response.json();
+            } else {
+                result = await response.text();
+                console.error("❌ Server returned unexpected response (not JSON):", result);
+                throw new Error("Invalid JSON response from server.");
+            }
+
+            console.log(result);
 
             if (response.ok) {
                 alert("✅ PDF successfully uploaded!");
-                console.log("📄 PDF Upload Response:", result);
             } else {
-                alert("❌ Error uploading PDF: " + result.error);
+                alert("❌ Error uploading PDF: " + (result.error || "Unknown error"));
                 console.error("❌ Upload Error:", result);
             }
         } catch (error) {
             console.error("❌ Upload Request Failed:", error);
-            alert("❌ Error uploading PDF.");
+            alert("❌ Error uploading PDF. Check console for details.");
         }
     });
 });
