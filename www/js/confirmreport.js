@@ -15,28 +15,17 @@ document.addEventListener("DOMContentLoaded", () => {
         <p><strong>Driver's Signature:</strong> ${reportData.driverSignature}</p>
     `;
 
-    // Ensure the image exists
+    // Ensure the logo image exists
     const logoImageElement = document.getElementById("logoImage");
-
     if (!logoImageElement) {
-        console.error("Logo image not found in the document.");
+        console.error("❌ Logo image not found in the document.");
         alert("Error: Logo image is missing.");
         return;
     }
 
-    // Attach event listeners to buttons
-    document.getElementById("submitReport").addEventListener("click", () => {
-        console.log("Submit Report clicked");
-        generatePDF(reportData, logoImageElement);
-    });
-
-    document.getElementById("downloadPDF").addEventListener("click", () => {
-        console.log("Download PDF clicked");
-        generatePDF(reportData, logoImageElement);
-    });
-
-    document.getElementById("sendPhoto").addEventListener("click", async () => {
-        console.log("Send Photo Clicked");
+    // Attach event listener to submit button
+    document.getElementById("submitReport").addEventListener("click", async () => {
+        console.log("📄 Submit Report clicked");
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
@@ -49,14 +38,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Convert to Blob
         const pdfBlob = doc.output("blob");
+
+        // ✅ Ensure PDF is correctly formatted as a File before sending
+        const pdfFile = new File([pdfBlob], "inspection_report.pdf", { type: "application/pdf" });
+
+        // Upload PDF to the backend
         const formData = new FormData();
-        formData.append("pdf", pdfBlob, "inspection_report.pdf");
+        formData.append("pdf", pdfFile);
         formData.append("username", reportData.driverName);
         formData.append("email", localStorage.getItem("email"));
         formData.append("role", localStorage.getItem("role"));
 
         try {
-            const response = await fetch("https://ddheavyhauling.xyz/uploadPdf", {
+            console.log("📤 Uploading PDF...");
+            const response = await fetch("https://ddheavyhauling.xyz/pdfs", {
                 method: "POST",
                 body: formData,
                 headers: {
@@ -64,14 +59,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
             });
 
+            const result = await response.json();
+
             if (response.ok) {
-                alert("PDF successfully uploaded!");
+                alert("✅ PDF successfully uploaded!");
+                console.log("📄 PDF Upload Response:", result);
             } else {
-                alert("Error uploading PDF.");
+                alert("❌ Error uploading PDF: " + result.error);
+                console.error("❌ Upload Error:", result);
             }
         } catch (error) {
-            console.error("Upload Error:", error);
-            alert("Error uploading PDF.");
+            console.error("❌ Upload Request Failed:", error);
+            alert("❌ Error uploading PDF.");
         }
     });
 });
