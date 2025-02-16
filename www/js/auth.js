@@ -23,7 +23,7 @@ async function signUp(username, email, password, role) {
     }
 }
 
-// Login function
+// Refactored Login function
 async function login(email, password) {
     try {
         const response = await fetch(`${API_URL}/auth/login`, {
@@ -36,15 +36,27 @@ async function login(email, password) {
 
         if (response.ok) {
             console.log("Login successful:", data);
+            
             localStorage.setItem("token", data.token);
-            localStorage.setItem("role", data.role);
-
-            if (data.role === "admin") {
-                window.location.href = "admin.html";
-            } else if (data.role === "staff") {
-                window.location.href = "staff.html";
+            localStorage.setItem("user", JSON.stringify(data.user)); // Store full user object
+            
+            if (data.user && data.user.role) {
+                localStorage.setItem("role", data.user.role); // Ensure the role is stored
+               
+                switch (data.user.role) {
+                    case "admin":
+                        window.location.href = "admin.html";
+                        break;
+                    case "staff":
+                        window.location.href = "staff.html";
+                        break;
+                    default:
+                        alert("Unknown role, cannot redirect.");
+                        window.location.href = "index.html";
+                        break;
+                }
             } else {
-                alert("Unknown role, cannot redirect.");
+                alert("Login successful, but user role is missing.");
             }
         } else {
             alert("Login failed: " + (data.message || "Unknown error"));
