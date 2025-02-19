@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "node server.js", 
-    "start": "node server.js", 
+    "dev": "node server.js",
+    "start": "node server.js",
     "build": "esbuild server.js --bundle --minify --sourcemap --platform=node --outdir=dist"
   },
   "keywords": [],
@@ -19,7 +19,8 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.9.7"
+    "mongoose": "^8.9.7",
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "esbuild": "^0.24.2"
