@@ -1,6 +1,4 @@
-const API_URL = process.env.NODE_ENV === 'production'
-    ? "https://api.ddheavyhauling.xyz"  // Production API URL
-    : "http://localhost:5150";          // Development API URL
+const API_URL = "https://ddheavyhauling.xyz"
 
 // Signup function
 async function signUp(username, email, password, role) {
