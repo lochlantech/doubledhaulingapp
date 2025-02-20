@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Admin Panel</title>
     <!-- Bootstrap 5 CSS -->
@@ -7,20 +8,22 @@
     <!-- Custom Authentication Script -->
     <script src="js/auth.js" defer></script>
 </head>
+
 <body class="container mt-5">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="#">UPLOAD PHOTO</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./uploadphoto.html">UPLOAD PHOTO</a></li>
                     <li class="nav-item"><a class="nav-link" href="./createreport.html">UPLOAD PDF</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">YOUR PHOTOS</a></li>
+                    <li class="nav-item"><a class="nav-link" href="yourphotos.html">YOUR PHOTOS</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">YOUR PDF'S</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">VIEW ALL PHOTOS</a></li>
+                    <li class="nav-item"><a class="nav-link" href="allphotos.html">VIEW ALL PHOTOS</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">VIEW ALL PDF'S</a></li>
                 </ul>
             </div>
@@ -31,7 +34,7 @@
             </ul>
         </div>
     </nav>
-    
+
     <div class="card p-4 shadow-sm">
         <h2 class="mb-3 text-center">Admin Panel</h2>
         <h3>All Users</h3>
@@ -62,27 +65,28 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="js/pdfViewer.js"></script>
-    
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap 5 Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         $(document).ready(() => {
             initializeAdminPanel();
         });
-    
+
         function initializeAdminPanel() {
             checkAdmin();
             fetchUsers();
             fetchPDFs();
         }
-    
+
         function fetchUsers() {
             const token = localStorage.getItem("token");
             $.ajax({
-                url: `https://ddheavyhauling.xyz/auth/users`,
+                // url: `https://ddheavyhauling.xyz/auth/users`,
+                url: `http://localhost:5150/auth/users`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` },
                 success: users => displayUsers(users),
@@ -92,7 +96,7 @@
                 }
             });
         }
-    
+
         function displayUsers(users) {
             if (!Array.isArray(users)) {
                 console.error("Invalid user data format:", users);
@@ -110,13 +114,14 @@
             `).join('');
             $("#usersTable tbody").html(tableBody);
         }
-    
+
         function deleteUser(userId) {
             const token = localStorage.getItem("token");
             if (!confirm("Are you sure you want to delete this user?")) return;
-    
+
             $.ajax({
-                url: `https://ddheavyhauling.xyz/auth/users/${userId}`,
+                // url: `https://ddheavyhauling.xyz/auth/users/${userId}`,
+                url: `http://localhost:5150/auth/users/${userId}`,
                 method: "DELETE",
                 headers: { "Authorization": `Bearer ${token}` },
                 success: response => {
@@ -129,18 +134,19 @@
                 }
             });
         }
-    
+
         function logout() {
             localStorage.removeItem("token");
             localStorage.removeItem("role");
             alert("Logged out successfully!");
             window.location.href = "index.html";
         }
-    
+
         function fetchPDFs() {
             const token = localStorage.getItem("token");
             $.ajax({
-                url: `https://ddheavyhauling.xyz/pdfs`,
+                // url: `https://ddheavyhauling.xyz/pdfs`,
+                url: `http://localhost:5150/pdfs`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` },
                 success: pdfs => displayPDFs(pdfs),
@@ -150,7 +156,7 @@
                 }
             });
         }
-    
+
         function displayPDFs(pdfs) {
             if (!Array.isArray(pdfs)) {
                 console.error("Invalid PDF data format:", pdfs);
@@ -165,24 +171,25 @@
             `).join('');
             $("#pdfReportsTable tbody").html(tableBody);
         }
-    
+
         document.addEventListener("DOMContentLoaded", async () => {
             try {
-                const response = await fetch("https://ddheavyhauling.xyz/pdfs", {
+                // const response = await fetch("https://ddheavyhauling.xyz/pdfs", {
+                const response = await fetch("http://localhost:5150/pdfs", {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
                 });
-    
+
                 if (!response.ok) throw new Error("Failed to fetch PDFs");
-    
+
                 const pdfReports = await response.json();
                 if (!Array.isArray(pdfReports)) {
                     console.error("Unexpected response format:", pdfReports);
                     return;
                 }
-    
+
                 const pdfTableBody = document.querySelector("#pdfReportsTable tbody");
                 pdfTableBody.innerHTML = ""; // Clear existing content
-    
+
                 pdfReports.forEach(report => {
                     const row = `
                         <tr>
@@ -193,13 +200,14 @@
                     `;
                     pdfTableBody.innerHTML += row;
                 });
-    
+
             } catch (error) {
                 console.error("Fetch PDFs Error:", error);
             }
         });
-    
+
     </script>
-        <canvas id="pdfViewerCanvas"></canvas>
+    <canvas id="pdfViewerCanvas"></canvas>
 </body>
+
 </html>

@@ -1,4 +1,5 @@
-const API_URL = "https://www.ddheavyhauling.xyz";  // Correct port
+// const API_URL = "https://www.ddheavyhauling.xyz";  // Correct port
+const API_URL = "http://localhost:5150";
 
 // Signup function
 async function signUp(username, email, password, role) {
@@ -23,7 +24,6 @@ async function signUp(username, email, password, role) {
     }
 }
 
-// Refactored Login function
 async function login(email, password) {
     try {
         const response = await fetch(`${API_URL}/auth/login`, {
@@ -36,13 +36,13 @@ async function login(email, password) {
 
         if (response.ok) {
             console.log("Login successful:", data);
-            
+
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(data.user)); // Store full user object
-            
+
             if (data.user && data.user.role) {
                 localStorage.setItem("role", data.user.role); // Ensure the role is stored
-               
+
                 switch (data.user.role) {
                     case "admin":
                         window.location.href = "admin.html";
