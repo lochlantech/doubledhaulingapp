@@ -4,7 +4,7 @@ const pdfjsLib = window['pdfjs-dist/build/pdf'];
 // Fetch and list available PDFs from the backend
 async function fetchAndListPDFs() {
     try {
-        const response = await fetch("https://www.ddheavyhauling.xyz/pdfs", {
+        const response = await fetch("https://ddheavyhauling.xyz/pdfs", {
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         });
 
