@@ -53,8 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             console.log("📤 Uploading PDF...");
-            // const response = await fetch("https://ddheavyhauling.xyz/pdfs/upload/", {
-            const response = await fetch("http://localhost:5150/pdfs/upload/", {
+            const response = await fetch("https://ddheavyhauling.xyz/pdfs/upload/", {
+            // const response = await fetch("http://localhost:5150/pdfs/upload/", {
                 method: "POST",
                 body: formData,
                 headers: {

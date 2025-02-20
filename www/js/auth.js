@@ -1,5 +1,6 @@
-// const API_URL = "https://www.ddheavyhauling.xyz";  // Correct port
-const API_URL = "http://localhost:5150";
+const API_URL = process.env.NODE_ENV === 'production'
+    ? "https://api.ddheavyhauling.xyz"  // Production API URL
+    : "http://localhost:5150";          // Development API URL
 
 // Signup function
 async function signUp(username, email, password, role) {
