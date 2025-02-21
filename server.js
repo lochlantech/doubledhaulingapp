@@ -19,9 +19,9 @@ app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
-
+        console.log("processenv" + process.env.NODE_ENV);
         const allowedOrigins = process.env.NODE_ENV === 'production'
-            ? ['https://ddheavyhauling.xyz', 'https://www.ddheavyhauling.xyz']
+            ? ['https://ddheavyhauling.xyz', 'https://www.ddheavyhauling.xyz', '*']
             : ['http://localhost:5150', 'http://127.0.0.1:5150', 'http://localhost:8080', 'null', undefined];
 
         if (allowedOrigins.includes(origin) || !origin) {
