@@ -15,41 +15,29 @@ const PORT = process.env.PORT || 5150;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/doubledhaulingapp";
 const SECRET_KEY = process.env.JWT_SECRET || "your-secret-key";
 
-// Update CORS configuration for both development and production
-const corsOptions = {
+app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
 
         const allowedOrigins = process.env.NODE_ENV === 'production'
-            ? [
-                'https://ddheavyhauling.xyz',
-                'https://www.ddheavyhauling.xyz',
-                'https://api.ddheavyhauling.xyz'
-            ]
-            : [
-                'http://localhost:5150',
-                'http://127.0.0.1:5150',
-                'http://localhost:8080',
-                'null'
-            ];
+            ? ['https://ddheavyhauling.xyz', 'https://www.ddheavyhauling.xyz']
+            : ['http://localhost:5150', 'http://127.0.0.1:5150', 'http://localhost:8080', 'null', undefined];
 
         if (allowedOrigins.includes(origin) || !origin) {
             callback(null, true);
         } else {
-            callback(new Error(`Origin ${origin} not allowed by CORS`));
+            callback(new Error('Not allowed by CORS'));
         }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
     exposedHeaders: ['Content-Range', 'X-Content-Range']
-};
+}));
 
-app.use(cors(corsOptions));
-
-// Add preflight handling
-app.options('*', cors(corsOptions));
+// Add preflight handling for all routes
+app.options('*', cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

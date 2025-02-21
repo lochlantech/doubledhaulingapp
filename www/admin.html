@@ -85,8 +85,8 @@
         function fetchUsers() {
             const token = localStorage.getItem("token");
             $.ajax({
-                url: `https://ddheavyhauling.xyz/auth/users`,
-                // url: `http://localhost:5150/auth/users`,
+                // url: `https://ddheavyhauling.xyz/auth/users`,
+                url: `http://localhost:5150/auth/users`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` },
                 success: users => displayUsers(users),
@@ -120,8 +120,8 @@
             if (!confirm("Are you sure you want to delete this user?")) return;
 
             $.ajax({
-                url: `https://ddheavyhauling.xyz/auth/users/${userId}`,
-                // url: `http://localhost:5150/auth/users/${userId}`,
+                // url: `https://ddheavyhauling.xyz/auth/users/${userId}`,
+                url: `http://localhost:5150/auth/users/${userId}`,
                 method: "DELETE",
                 headers: { "Authorization": `Bearer ${token}` },
                 success: response => {
@@ -145,8 +145,8 @@
         function fetchPDFs() {
             const token = localStorage.getItem("token");
             $.ajax({
-                url: `https://ddheavyhauling.xyz/pdfs`,
-                // url: `http://localhost:5150/pdfs`,
+                // url: `https://ddheavyhauling.xyz/pdfs`,
+                url: `http://localhost:5150/pdfs`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` },
                 success: pdfs => displayPDFs(pdfs),
@@ -174,8 +174,8 @@
 
         document.addEventListener("DOMContentLoaded", async () => {
             try {
-                const response = await fetch("https://ddheavyhauling.xyz/pdfs", {
-                // const response = await fetch("http://localhost:5150/pdfs", {
+                // const response = await fetch("https://ddheavyhauling.xyz/pdfs", {
+                const response = await fetch("http://localhost:5150/pdfs", {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
                 });
 
